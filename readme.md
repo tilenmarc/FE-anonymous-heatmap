@@ -2,21 +2,22 @@
 
 This repository demonstrates how the [GoFE](https://github.com/fentec-project/gofe) functional encryption (FE)
 library can be used for creating heatmap from locations data of users in a way that the data of each individual
-is anonymous and encrypted. The server is able to preform computations on encrypted data together with keys given
+is anonymous and encrypted. The server is able to perform computations on encrypted data together with keys given
 by all the users decrypting only the sum of all the locations, i.e. creating a heatmap.
 
 Specifically, we simulate users of London Underground giving encrypted location information to the server
 allowing the server to create only the sum of all their locations while the individual's locations remain
 anonymous to the server as well as to the other users. With such data the server gains information about
-the usage of each station making it able to detect increased traffic, congestion, etc.
+the usage of each station making it able to detect increased traffic, congestion, etc, while preserving the
+privacy of the users.
 
 ### Input data
 In this repository we can find data about the stations of London Underground (`london_stations.csv`) and 
 train lines connecting them (`london_connections.csv`). The data is collected with python3 script
 `london_create_data.py`, which additionally creates location information about users. The latter is created
-in a random way, each user randomly chooses a starting station and by a mix of shortest paths and random walking
-travels to a final station. For example, data of one user can visualized in the following image showing the path
-of travel of one user:
+in a random way, each user randomly chooses a starting station and by a mix of shortest paths and random choices
+travels to a final station. For example, data of one user can be visualized in the following image showing the path
+traveled by one user:
 
 ![Alt text](one_user.png?raw=true "Visualization of data of a user.")
 
@@ -25,7 +26,7 @@ if the user has traveled via the corresponding station. The data of all such vec
 Note: this is a private information of every user which in a practical scenario would not be collected.
 
 #### Generating training data
-If one wishes to re-create the random data, it can be cone in the following way:
+If one wishes to re-create the random data, this can be cone in the following way:
 
 1. Install the dependencies:
 ````bash
@@ -39,7 +40,6 @@ $ python3 london_create_data.py
 ````
 ## Running the example
 
-## How to run the example
 1. Build the example by running:
 ````bash
 $ go get github.com/fentec-project/FE-anonymous-heatmap
@@ -64,7 +64,7 @@ others and creates a shared secret with his private key.
 * Each user then encrypts his vector of locations with his secret.
 * Each user creates a partial key which can be used only for the decryption of the sum of all the the location vectors.
 * Finally, the server collects partial keys of all the users. With all the keys it is able to decrypt the sum of all
-location vectors giving it the data for the heatmap.
+location vectors giving it the data for the heatmap. No individual data can be decrypted with these keys.
 
 Running the above script should output the following:
 ````bash
@@ -86,5 +86,5 @@ the traffic through each station. This can be achieved by running a python3 scri
 ````bash
 $ python3 london_visualize.py
 ````
-The image should be now save in `heatmap.png`. It should look like:
+The image is now saved in `heatmap.png`. It should look like:
 ![Alt text](heatmap.png?raw=true "Visualization of data of a user.")
