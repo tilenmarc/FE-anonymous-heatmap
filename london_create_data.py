@@ -65,5 +65,5 @@ for i in range(num_clients):
 w.close()
 
 nx.draw(G, node_size=30, pos=positions, node_color=vectors[0], cmap="YlGnBu",
-               vmin=-1, vmax=2)
+               vmin=-2, vmax=2)
 plt.savefig('one_user.png', dpi=1000)
