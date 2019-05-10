@@ -54,7 +54,7 @@ func main() {
 
 	// create clients and make a slice of their public values
 	for i := 0; i < numClients; i++ {
-		c, err := fullysec.NewDMCFEClientNew(i)
+		c, err := fullysec.NewDMCFEClient(i)
 		if err != nil {
 			panic(errors.Wrap(err, "could not instantiate fullysec"))
 		}
