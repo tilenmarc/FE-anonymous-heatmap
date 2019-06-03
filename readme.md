@@ -1,19 +1,19 @@
 # Creating privacy preserving heatmap with functional encryption - example
 
 This repository demonstrates how the [GoFE](https://github.com/fentec-project/gofe) functional encryption (FE)
-library can be used for creating heatmap from locations data of users in a way that the data of each individual
+library can be used for creating heatmap from location data of users in a way that the data of each individual
 is anonymous and encrypted. The server is able to perform computations on encrypted data together with keys given
 by all the users decrypting only the sum of all the locations, i.e. creating a heatmap.
 
-Specifically, we simulate users of London Underground giving encrypted location information to the server
+Particularly, we simulate users of London Underground giving encrypted location information to the server
 allowing the server to create only the sum of all their locations while the individual's locations remain
 anonymous to the server as well as to the other users. With such data the server gains information about
-the usage of each station making it able to detect increased traffic, congestion, etc, while preserving the
+the usage of each station making it able to detect increased traffic, congestions, etc., while preserving the
 privacy of the users.
 
 ### Input data
-In this repository we can find data about the stations of London Underground (`london_stations.csv`) and 
-train lines connecting them (`london_connections.csv`). The data is collected with python3 script
+In this repository one can find data about the stations of London Underground (`london_stations.csv`) and 
+train lines connecting them (`london_connections.csv`). The data is collected with Python3 script
 `london_create_data.py`, which additionally creates location information about users. The latter is created
 in a random way, each user randomly chooses a starting station and by a mix of shortest paths and random choices
 travels to a final station. For example, data of one user can be visualized in the following image showing the path
@@ -25,19 +25,7 @@ To be more precise, the data of each user is a vector of zeros and ones, each in
 if the user has traveled via the corresponding station. The data of all such vectors is saved in `london_paths.txt`.
 Note: this is a private information of every user which in a practical scenario would not be collected.
 
-#### Generating training data
-If one wishes to re-create the random data, this can be cone in the following way:
 
-1. Install the dependencies:
-````bash
-$ pip3 install networkx matplotlib
-````
-2. Navigate to the root of this repository and run the
-python3 training script:
-````bash
-$ cd $GOPATH/src/github.com/fentec-project/FE-anonymous-heatmap
-$ python3 london_create_data.py
-````
 ## Running the example
 
 1. Build the example by running:
@@ -67,7 +55,7 @@ others and creates a shared secret with his private key.
 location vectors giving it the data for the heatmap. No individual data can be decrypted with these keys.
 
 Running the above script should output the following:
-````bash
+````
 reading the data; numer of clients: 100
 clients agreed on secret keys
 simulating encryption of 100 clients
@@ -81,10 +69,23 @@ included in this example, hence the output is a 302-dimensional vector describin
 each station.
 
 ### Visualization
-The obtained heatmap vector can be visualized on the network of London Underground with colors of indicating
-the traffic through each station. This can be achieved by running a python3 script:
+The obtained heatmap vector can be visualized on the network of London Underground with colors indicating
+the traffic through each station. This can be achieved by running a provided Python3 script. First install
+the dependencies:
 ````bash
+$ pip3 install networkx matplotlib
+```` 
+Navigate to the root of this repository and run the visualization script:
+````bash
+$ cd $GOPATH/src/github.com/fentec-project/FE-anonymous-heatmap
 $ python3 london_visualize.py
 ````
 The image is now saved in `heatmap.png`. It should look like:
 ![Alt text](heatmap.png?raw=true "Visualization of data of a user.")
+
+### Generating training data
+If one wishes to re-create the random data, this can be cone by running the following
+Python3 script:
+````bash
+$ python3 london_create_data.py
+````
