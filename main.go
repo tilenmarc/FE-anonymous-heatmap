@@ -47,10 +47,10 @@ func main() {
 	}
 	numClients := len(pathVectors)
 	vecDim := len(pathVectors[0])
-	fmt.Println("reading the data; numer of clients:", numClients)
+	fmt.Println("reading the data; numer of clients:", numClients, "number of stations:", vecDim)
 
 	clients := make([]*fullysec.DMCFEClient, numClients)
-	pubT := make([]data.Matrix, numClients)
+	pubT := make([]*bn256.G1, numClients)
 
 	// create clients and make a slice of their public values
 	for i := 0; i < numClients; i++ {
@@ -59,12 +59,12 @@ func main() {
 			panic(errors.Wrap(err, "could not instantiate fullysec"))
 		}
 		clients[i] = c
-		pubT[i] = c.TPub
+		pubT[i] = c.ClientPubKey
 	}
 
 	// based on public values of each client create private matrices T_i summing to 0
 	for i := 0; i < numClients; i++ {
-		err = clients[i].SetT(pubT)
+		err = clients[i].SetShare(pubT)
 		if err != nil {
 			panic(errors.Wrap(err, "could not create private values"))
 
@@ -96,7 +96,7 @@ func main() {
 	keyShares := make([]data.VectorG2, numClients)
 	oneVec := data.NewConstantVector(numClients, big.NewInt(1))
 	for k := 0; k < numClients; k++ {
-		keyShare, err := clients[k].GenerateKeyShare(oneVec)
+		keyShare, err := clients[k].DeriveKeyShare(oneVec)
 		if err != nil {
 			panic(errors.Wrap(err, "could not generate key shares"))
 		}
@@ -106,12 +106,9 @@ func main() {
 
 
 	heatmap := make([]*big.Int, vecDim)
-	var dec *fullysec.DMCFEDecryptor
 	for i := 0; i < vecDim; i++ {
 		label := stations[i]
-
-		dec = fullysec.NewDMCFEDecryptor(oneVec, label, ciphers[i], keyShares, big.NewInt(int64(numClients)))
-		heatmap[i], err = dec.Decrypt()
+		heatmap[i], err = fullysec.DMCFEDecrypt(ciphers[i], keyShares, oneVec, label, big.NewInt(int64(numClients)))
 		if err != nil {
 			panic(errors.Wrap(err, "could not decrypt"))
 		}
