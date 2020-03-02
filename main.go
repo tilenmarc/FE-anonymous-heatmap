@@ -47,10 +47,10 @@ func main() {
 	}
 	numClients := len(pathVectors)
 	vecDim := len(pathVectors[0])
-	fmt.Println("reading the data; numer of clients:", numClients, "number of stations:", vecDim)
+	fmt.Println("reading the data; numer of clients:", numClients)
 
 	clients := make([]*fullysec.DMCFEClient, numClients)
-	pubT := make([]*bn256.G1, numClients)
+	pubKeys := make([]*bn256.G1, numClients)
 
 	// create clients and make a slice of their public values
 	for i := 0; i < numClients; i++ {
@@ -59,12 +59,12 @@ func main() {
 			panic(errors.Wrap(err, "could not instantiate fullysec"))
 		}
 		clients[i] = c
-		pubT[i] = c.ClientPubKey
+		pubKeys[i] = c.ClientPubKey
 	}
 
 	// based on public values of each client create private matrices T_i summing to 0
 	for i := 0; i < numClients; i++ {
-		err = clients[i].SetShare(pubT)
+		err = clients[i].SetShare(pubKeys)
 		if err != nil {
 			panic(errors.Wrap(err, "could not create private values"))
 
@@ -119,4 +119,3 @@ func main() {
 
 	writeVecToFile("london_heatmap.txt", stations, heatmap)
 }
-
